@@ -23,27 +23,7 @@
               <button class="addbtn" @click="add">+Add Student</button>
             </div>
           </div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">City</th>
-                <th scope="col">State</th>
-                <th scope="col">Country</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="res in results" :key="res.id">
-                <th scope="row">{{ res.id }}</th>
-                <td>{{ res.name }}</td>
-                <td>{{ res.City }}</td>
-                <td>{{ res.State }}</td>
-                <td>{{ res.Country }}</td>
-              </tr>
-              
-            </tbody>
-          </table>
+          <BaseTable :tableHeader=this.ColumnName :tableData=this.results />
         </div>
       </div>
     </div>
@@ -56,14 +36,25 @@ import { mapGetters } from "vuex";
 import { mapMutations } from "vuex";
 import sidenav from "@/components/sidenav.vue";
 import axios from "axios";
+import BaseTable from "@/components/Table.vue"
 
 export default {
   data: function () {
     return {
       results: "",
+      ColumnName:[
+        {id:1,name:'ID'},
+        {id:2,name:'Name'},
+        {id:3,name:'City'},
+        {id:4,name:'State'},
+        {id:5,name:'Country'}
+      ]
     };
   },
-  components: { sidenav },
+  components: { 
+    sidenav,
+    BaseTable
+    },
   computed: {
     ...mapGetters(["getUser","getToken"]),
   },
@@ -105,7 +96,7 @@ export default {
   display: inline;
 }
 .main {
-  margin-left: 300px;
+  margin-left: 308px;
 }
 .header {
   display: flex;
@@ -156,13 +147,11 @@ export default {
   color: white;
   font-size: 15px;
 }
-
 .btnallign {
   text-align: end;
   padding-right: 0px;
   padding-bottom: 5px;
 }
-
 @media only screen and (max-width: 1200px) {
   .userarea {
     transform: translateX(-43px);

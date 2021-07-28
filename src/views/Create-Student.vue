@@ -80,27 +80,7 @@
       <div class="row">
         <div class="col studentrecord">
           <h4 class="submitetdtitle">Submited Details</h4>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">City</th>
-                <th scope="col">State</th>
-                <th scope="col">Country</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr >
-                <th scope="row">{{ this.res_id }}</th>
-                <td>{{ this.res_name }}</td>
-                <td>{{ this.res_city }}</td>
-                <td>{{ this.res_State }}</td>
-                <td>{{ this.res_Country }}</td>
-              </tr>
-             
-            </tbody>
-          </table>
+          <BaseTable :tableHeader=this.ColumnName :tableData=this.postData />
         </div>
       </div>
     </div>
@@ -112,6 +92,7 @@ import sidenav from "@/components/sidenav.vue";
 import { mapGetters } from "vuex";
 import { mapMutations } from "vuex";
 import axios from 'axios';
+import BaseTable from "@/components/Table.vue"
 
 export default {
   data:function(){
@@ -120,12 +101,14 @@ export default {
          city:"",
          state:"",
          country:"",
-         postData:"",
-         res_id:"",
-         res_name:"",
-         res_city:"",
-         res_State:"",
-         res_Country:""
+         postData:[],
+         ColumnName:[
+        {id:1,name:'ID'},
+        {id:2,name:'Name'},
+        {id:3,name:'City'},
+        {id:4,name:'State'},
+        {id:5,name:'Country'}
+      ]
        }
   },
    methods: {
@@ -151,13 +134,8 @@ export default {
           Authorization: "Token " + this.getToken, //the token is a variable which holds the token
         },
        }).then((res)=>{
-        this.postData = res.data
-        console.log(this.postData.id )
-        this.res_id = this.postData.id
-        this.res_name = this.postData.name
-        this.res_city = this.postData.City
-        this.res_State = this.postData.State
-        this.res_Country = this.postData.Country
+        this.postData.push(res.data)
+        console.log(this.postData )
        })
        this.name = ""
         this.city = ""
@@ -168,7 +146,7 @@ export default {
   computed: {
     ...mapGetters(["getUser","getToken"]),
   },
-  components: { sidenav },
+  components: { sidenav,BaseTable },
 };
 </script>
 
@@ -177,7 +155,7 @@ export default {
   display: inline;
 }
 .createmain {
-  margin-left: 300px;
+  margin-left: 308px;
 }
 .studentform {
   margin-left: 15px;
