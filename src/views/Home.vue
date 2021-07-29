@@ -19,11 +19,8 @@
             <div class="col-10">
               <h4 class="headingstudent">Student Details</h4>
             </div>
-            <div class="col-2 btnallign">
-              <button class="addbtn" @click="add">+Add Student</button>
-            </div>
           </div>
-          <BaseTable :tableHeader=this.ColumnName :tableData=this.results />
+          <BaseTable :tableHeader=this.ColumnName :tableData=this.results :showSearchBar=true />
         </div>
       </div>
     </div>
@@ -41,7 +38,7 @@ import BaseTable from "@/components/Table.vue"
 export default {
   data: function () {
     return {
-      results: "",
+      results: [],
       ColumnName:[
         {id:1,name:'ID'},
         {id:2,name:'Name'},

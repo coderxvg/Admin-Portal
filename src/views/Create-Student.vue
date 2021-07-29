@@ -19,54 +19,38 @@
               <div class="col-6">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter Name"
+                  <BaseInput
                     v-model="name"
+                    placeholder="Enter Name"
+                    type="Text"
                   />
                 </div>
               </div>
               <div class="col-6">
                 <div class="form-group">
                   <label for="exampleInputEmail1">City</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter City"
-                    v-model="city"
-                  />
+                  <BaseInput v-model="city" placeholder="Enter City" />
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-6">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">State</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter State"
+                  <label for="exampleFormControlSelect1">State</label>
+                  <BaseDropDown
                     v-model="state"
+                    :options="stateOptions"
+                    :label="(labelValue = 'Enter State')"
                   />
                 </div>
               </div>
               <div class="col-6">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Country</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter Country"
+                  <BaseDropDown
                     v-model="country"
+                    :options="countryOptions"
+                    :label="(labelValue = 'Enter Country')"
                   />
                 </div>
               </div>
@@ -80,7 +64,10 @@
       <div class="row">
         <div class="col studentrecord">
           <h4 class="submitetdtitle">Submited Details</h4>
-          <BaseTable :tableHeader=this.ColumnName :tableData=this.postData />
+          <BaseTable
+            :tableHeader="this.ColumnName"
+            :tableData="this.postData"
+          />
         </div>
       </div>
     </div>
@@ -91,27 +78,40 @@
 import sidenav from "@/components/sidenav.vue";
 import { mapGetters } from "vuex";
 import { mapMutations } from "vuex";
-import axios from 'axios';
-import BaseTable from "@/components/Table.vue"
+import axios from "axios";
+import BaseTable from "@/components/Table.vue";
+import BaseInput from "@/components/base-input.vue";
+import BaseDropDown from "@/components/base-dropdown.vue";
 
 export default {
-  data:function(){
-       return{
-         name:"",
-         city:"",
-         state:"",
-         country:"",
-         postData:[],
-         ColumnName:[
-        {id:1,name:'ID'},
-        {id:2,name:'Name'},
-        {id:3,name:'City'},
-        {id:4,name:'State'},
-        {id:5,name:'Country'}
-      ]
-       }
+  data: function () {
+    return {
+      name: "",
+      city: "",
+      state: "",
+      country: "",
+      postData: [],
+      ColumnName: [
+        { id: 1, name: "ID" },
+        { id: 2, name: "Name" },
+        { id: 3, name: "City" },
+        { id: 4, name: "State" },
+        { id: 5, name: "Country" },
+      ],
+      stateOptions: [
+        { id: 1, name: "Mp" },
+        { id: 2, name: "Karnataka" },
+        { id: 3, name: "Tamil Nadu" },
+      ],
+      countryOptions: [
+        { id: 1, name: "India" },
+        { id: 2, name: "Usa" },
+        { id: 3, name: "Canada" },
+      ],
+      labelValue: "",
+    };
   },
-   methods: {
+  methods: {
     ...mapMutations(["logoutUser"]),
     logout() {
       this.logoutUser();
@@ -121,32 +121,33 @@ export default {
         path: "/",
       });
     },
-    submitDetails(){
+    submitDetails() {
       var data = {
         name: this.name,
-        City:this.city,
-        State:this.state,
-        Country:this.country
-      }
-       axios
-       .post("http://127.0.0.1:8000/student/",data,{
-         headers: {
-          Authorization: "Token " + this.getToken, //the token is a variable which holds the token
-        },
-       }).then((res)=>{
-        this.postData.push(res.data)
-        console.log(this.postData )
-       })
-       this.name = ""
-        this.city = ""
-        this.state = ""
-        this.country = ""
-    }
+        City: this.city,
+        State: this.state,
+        Country: this.country,
+      };
+      axios
+        .post("http://127.0.0.1:8000/student/", data, {
+          headers: {
+            Authorization: "Token " + this.getToken, //the token is a variable which holds the token
+          },
+        })
+        .then((res) => {
+          this.postData.push(res.data);
+          //console.log(this.postData )
+        });
+      this.name = "";
+      this.city = "";
+      this.state = "";
+      this.country = "";
+    },
   },
   computed: {
-    ...mapGetters(["getUser","getToken"]),
+    ...mapGetters(["getUser", "getToken"]),
   },
-  components: { sidenav,BaseTable },
+  components: { sidenav, BaseTable, BaseInput, BaseDropDown },
 };
 </script>
 
@@ -172,8 +173,8 @@ export default {
   font-size: 15px;
   margin-bottom: 20px;
 }
-.submitetdtitle{
-   font-size: 19px;
-   margin-left: 14px;
+.submitetdtitle {
+  font-size: 19px;
+  margin-left: 14px;
 }
 </style>

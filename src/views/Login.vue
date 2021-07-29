@@ -24,12 +24,6 @@
           placeholder="password"
         />
       </div>
-
-      <div class="row form-group" v-if="this.error">
-        <div class="col errmsg">
-          <p class="login">{{this.errormessage}}</p>
-        </div>
-      </div>
       <div class="row form-group">
         <div class="col submitbtn">
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -49,8 +43,7 @@ export default {
       username: "",
       password: "",
       token: "",
-      errormessage:"",
-      error:false
+
     };
   },
   methods: {
