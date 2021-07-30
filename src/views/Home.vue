@@ -40,8 +40,8 @@ export default {
     return {
       results: [],
       ColumnName:[
-        {id:1,name:'ID'},
-        {id:2,name:'Name'},
+        {id:1,name:'id'},
+        {id:2,name:'name'},
         {id:3,name:'City'},
         {id:4,name:'State'},
         {id:5,name:'Country'}

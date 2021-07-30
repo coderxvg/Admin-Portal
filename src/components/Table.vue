@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="searchArea" v-show="showSearchBar">
-      <input type="text" placeholder="Search" class="serachInput" v-model="Search" />
+      <input
+        type="text"
+        placeholder="Search"
+        class="serachInput"
+        v-model="Search"
+      />
       <button class="searchButton" @click="searchData">
         <i class="fas fa-search"></i>
       </button>
@@ -19,8 +24,7 @@
           </th>
         </tr>
       </thead>
-      <tbody >
-
+      <tbody>
         <tr v-for="res in tableData" :key="res.id">
           <td scope="row" v-for="obj in res" :key="obj.id">{{ obj }}</td>
         </tr>
@@ -39,14 +43,12 @@
           </th>
         </tr>
       </thead>
-      <tbody >
-
+      <tbody>
         <tr v-for="res in filterArray" :key="res.id">
           <td scope="row" v-for="obj in res" :key="obj.id">{{ obj }}</td>
         </tr>
       </tbody>
     </table>
-
   </div>
 </template>
 
@@ -57,102 +59,70 @@ export default {
       rowData: "",
       rowArray: [],
       headerName: "",
-      Search:"",
-      filterArray:[],
-      filtredRow:false
+      Search: "",
+      filterArray: [],
+      filtredRow: false,
     };
   },
   name: "BaseTable",
   props: {
     tableHeader: {
       type: Array,
-      default:() =>[]
+      default: () => [],
     },
     tableData: {
       type: Array,
-      default:() =>[]
+      default: () => [],
     },
-    showSearchBar:{
-      type:Boolean,
-      default:() => false
-    }
+    showSearchBar: {
+      type: Boolean,
+      default: () => false,
+    },
   },
   methods: {
     sortData(e) {
       var headerName = e;
-      if (headerName === "ID") {
-        this.sortByID();
-      }
-      if (headerName === "Name") {
-        this.sortByName();
-      }
-      if (headerName === "City") {
-        this.sortByCity();
-      }
-      if (headerName === "State") {
-        this.sortByState();
-      }
-      if (headerName === "Country") {
-        this.sortByCountry();
+      if (headerName) {
+        this.sortData(headerName);
       }
     },
-    sortByName() {
-      function compare(a, b) {
-        if (a.name.toUpperCase() < b.name.toUpperCase()) return -1;
-        if (a.name.toUpperCase() > b.name.toUpperCase()) return 1;
-        return 0;
+    sortData(key) {
+      function compareValues(key, order = "asc") {
+        return function innerSort(a, b) {
+          if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            return 0;
+          }
+
+          const varA =
+            typeof a[key] === "string" ? a[key].toUpperCase() : a[key];
+          const varB =
+            typeof b[key] === "string" ? b[key].toUpperCase() : b[key];
+
+          let comparison = 0;
+          if (varA > varB) {
+            comparison = 1;
+          } else if (varA < varB) {
+            comparison = -1;
+          }
+          return order === "desc" ? comparison * -1 : comparison;
+        };
       }
-      this.tableData.sort(compare);
-      this.filterArray.sort(compare);
       // console.log(this.tableData);
+      this.tableData.sort(compareValues(key,'asc'));
+      this.filterArray.sort(compareValues(key,'asc'));
     },
-    sortByID() {
-      function compare(a, b) {
-        if (a.id < b.id) return -1;
-        if (a.id > b.id) return 1;
-        return 0;
-      }
-      this.tableData.sort(compare);
-      this.filterArray.sort(compare);
-      // console.log(this.tableData);
+    
+    searchData() {
+      this.filtredRow = true;
+      this.filterArray = this.fiterData();
     },
-    sortByCity() {
-      function compare(a, b) {
-        if (a.City.toUpperCase() < b.City.toUpperCase()) return -1;
-        if (a.City.toUpperCase() > b.City.toUpperCase()) return 1;
-        return 0;
-      }
-      this.tableData.sort(compare);
-      this.filterArray.sort(compare);
-      // console.log(this.tableData);
+    fiterData() {
+      return this.tableData.filter((d) =>
+        this.Search.split(" ").every((v) =>
+          d.name.toLowerCase().includes(v.toLowerCase())
+        )
+      );
     },
-    sortByState() {
-      function compare(a, b) {
-        if (a.State.toUpperCase() < b.State.toUpperCase()) return -1;
-        if (a.State.toUpperCase() > b.State.toUpperCase()) return 1;
-        return 0;
-      }
-      this.tableData.sort(compare);
-      this.filterArray.sort(compare);
-      // console.log(this.tableData);
-    },
-    sortByCountry() {
-      function compare(a, b) {
-        if (a.Country.toUpperCase() < b.Country.toUpperCase()) return -1;
-        if (a.Country.toUpperCase() > b.Country.toUpperCase()) return 1;
-        return 0;
-      }
-      this.tableData.sort(compare);
-      this.filterArray.sort(compare);
-      // console.log(this.tableData);
-    },
-    searchData(){
-      this.filtredRow =true
-      this.filterArray =  this.fiterData();   
-    },
-    fiterData(){
-      return this.tableData.filter(d => this.Search.split(' ').every(v => d.name.toLowerCase().includes(v.toLowerCase())))
-    }
   },
 };
 </script>
@@ -177,7 +147,7 @@ th {
   font-size: 1rem;
   font-weight: 400;
 }
-.serachInput[type=text]:focus{
-   outline: 2px solid #0277bd;
+.serachInput[type="text"]:focus {
+  outline: 2px solid #0277bd;
 }
 </style>
