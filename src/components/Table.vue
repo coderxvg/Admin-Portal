@@ -6,12 +6,13 @@
         placeholder="Search"
         class="serachInput"
         v-model="Search"
+        @keyup="searchData"
       />
-      <button class="searchButton" @click="searchData">
+      <button class="searchButton" @click="searchData" >
         <i class="fas fa-search"></i>
       </button>
     </div>
-    <table class="table" v-show="!filtredRow">
+    <table class="table">
       <thead>
         <tr>
           <th
@@ -25,30 +26,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="res in tableData" :key="res.id">
+        <tr v-for="res in computedData" :key="res.id">
           <td scope="row" v-for="obj in res" :key="obj.id">{{ obj }}</td>
         </tr>
       </tbody>
     </table>
-    <table class="table" v-show="filtredRow">
-      <thead>
-        <tr>
-          <th
-            scope="col"
-            v-for="header in tableHeader"
-            :key="header.id"
-            @click="sortData($event.target.innerText)"
-          >
-            {{ header.name }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="res in filterArray" :key="res.id">
-          <td scope="row" v-for="obj in res" :key="obj.id">{{ obj }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="row pageLabel">
+      <div class="col">
+        <img
+          src="@/assets/leftarrow.png"
+          alt=""
+          class="iconleft"
+          @click.prevent="changePage(-1)"
+        />
+        Showing Page {{ page }} of {{ currentPages }}
+        <img
+          src="@/assets/leftarrow.png"
+          alt=""
+          class="iconright"
+          @click.prevent="changePage(1)"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -62,6 +61,8 @@ export default {
       Search: "",
       filterArray: [],
       filtredRow: false,
+      perPage: 7,
+      page: 1,
     };
   },
   name: "BaseTable",
@@ -108,10 +109,10 @@ export default {
         };
       }
       // console.log(this.tableData);
-      this.tableData.sort(compareValues(key,'asc'));
-      this.filterArray.sort(compareValues(key,'asc'));
+      this.tableData.sort(compareValues(key, "asc"));
+      this.filterArray.sort(compareValues(key, "asc"));
     },
-    
+
     searchData() {
       this.filtredRow = true;
       this.filterArray = this.fiterData();
@@ -123,6 +124,49 @@ export default {
         )
       );
     },
+    changePage(val) {
+      switch (val) {
+        case -1:
+          this.page = this.page > 1 ? this.page - 1 : this.page;
+          break;
+        case 1:
+          this.page = this.page < this.pages ? this.page + 1 : this.page;
+          break;
+      }
+    },
+  },
+  computed: {
+    computedData() {
+      const firstIndex = (this.page - 1) * this.perPage
+      const lastIndex = this.page * this.perPage;
+
+      if (this.filterArray.length == 0) {
+        return this.tableData.slice(firstIndex, lastIndex);
+      } else {
+        return this.filterArray.slice(firstIndex, lastIndex);
+      }
+    },
+    pages() {
+      const remainder = this.tableData.length % this.perPage;
+      if (remainder > 0) {
+        return Math.floor(this.tableData.length / this.perPage) + 1;
+      } else {
+        return this.tableData.length / this.perPage;
+      }
+    },
+    currentPages(){
+      if (this.filterArray.length == 0){
+        return this.pages
+      }else{
+        const remainder = this.filterArray.length % this.perPage;
+      if (remainder > 0) {
+        return Math.floor(this.filterArray.length / this.perPage) + 1;
+      } else {
+        return this.filterArray.length / this.perPage;
+      }
+      }
+      
+    }
   },
 };
 </script>
@@ -149,5 +193,23 @@ th {
 }
 .serachInput[type="text"]:focus {
   outline: 2px solid #0277bd;
+}
+.pageLabel {
+  margin-left: 2px;
+}
+.iconleft {
+  height: 15px;
+  padding-left: 0;
+  padding-right: 3px;
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+.iconright {
+  height: 15px;
+  padding-left: 0;
+  padding-right: 3px;
+  transform: translateY(-2px);
+  transform: rotate(180deg);
+  cursor: pointer;
 }
 </style>
